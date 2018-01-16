@@ -1,0 +1,28 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    daemons (1.2.6)
+    eventmachine (1.2.5)
+    jasmine (2.8.0)
+      jasmine-core (>= 2.8.0, < 3.0.0)
+      phantomjs
+      rack (>= 1.2.1)
+      rake
+    jasmine-core (2.8.0)
+    phantomjs (2.1.1.0)
+    rack (2.0.3)
+    rake (12.3.0)
+    thin (1.7.2)
+      daemons (~> 1.0, >= 1.0.9)
+      eventmachine (~> 1.0, >= 1.0.4)
+      rack (>= 1, < 3)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  jasmine
+  thin
+
+BUNDLED WITH
+   1.14.3
