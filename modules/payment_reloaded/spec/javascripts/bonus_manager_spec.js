@@ -2,7 +2,7 @@ describe('BonusProgram', function(){
   var ttn, settings, manager, hub;
 
   beforeEach(function(){
-    Subscriber.prototype.settings.event_broker = Object.create(Hub);
+    Subscriber.settings.event_broker = Object.create(Hub);
     manager = new PaymentManager();
     manager.registerComponent(new PriceComponent({ id: 1, price: 0 }));
     settings =  {
@@ -30,7 +30,7 @@ describe('BonusProgram', function(){
   });
 
   afterEach(function(){
-      Subscriber.prototype.settings.event_broker = Hub;
+      Subscriber.settings.event_broker = Hub;
   });
 
   describe('Subscriber', function(){
@@ -110,7 +110,7 @@ describe('BonusManager', function(){
           }
         }
       };
-      Subscriber.prototype.settings.event_broker = Hub;
+      Subscriber.settings.event_broker = Hub;
       paymentManager = new PaymentManager();
       bonusManager = new BonusManager({ data: data });
 

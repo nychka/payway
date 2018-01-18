@@ -1,6 +1,3 @@
-// PaymentSystem.prototype = Object.create(PriceComponent.prototype);
-// PaymentSystem.prototype.constructor = PaymentSystem;
-
 CardsPicker.prototype = Object.create(Component.prototype);
 CardsPicker.prototype.constructor = CardsPicker;
 
@@ -79,127 +76,30 @@ CardsPickerDefaultState.prototype.constructor = CardsPickerDefaultState;
 CardsPickerOtpState.prototype = Object.create(State.prototype);
 CardsPickerOtpState.prototype.constructor = CardsPickerOtpState;
 
-CardsPicker.prototype.states = {
-    'disabled': CardsPickerDisabledState,
-    'default': CardsPickerDefaultState,
-    'otp': CardsPickerOtpState
-};
-
-CardsPicker.prototype.filters = {
-    'number': function(cards, number){
-        return cards.filter(function(card){
-            return card.number === number;
-        });
+CardsPicker.settings = {
+    'extensions':  {
+        'subscriber': Subscriber,
+        'state'  : StateMachine,
+        'presenter': Presenter,
+        'history': History
     },
-    'group': function(cards, group){
-        return cards.filter(function(card){
-            return card.group === group;
-        });
+    'states': {
+        'disabled': CardsPickerDisabledState,
+        'default': CardsPickerDefaultState,
+        'otp': CardsPickerOtpState
     },
-};
-
-StateMachine.prototype.errors = {
-    'state_not_found': function(data){
-        function NoStateFoundError(state){
-            this.name = 'NoStateFoundError';
-            this.message = 'No state found by id: ' + state;
-        };
-        NoStateFoundError.prototype = Object.create(Error.prototype);
-        NoStateFoundError.prototype.constructor = NoStateFoundError;
-
-        return new NoStateFoundError(data);
+    'filters': {
+        'number': function(cards, number){
+            return cards.filter(function(card){
+                return card.number === number;
+            });
+        },
+        'group': function(cards, group){
+            return cards.filter(function(card){
+                return card.group === group;
+            });
+        },
     },
-    'method_not_overloaded': function(method)
-    {
-        function MethodNotOverloadedError(method){
-            this.name = 'MethodNotOverloadedError';
-            this.message = 'Method ' + method + ' must be overloaded!';
-        };
-        MethodNotOverloadedError.prototype = Object.create(Error.prototype);
-        MethodNotOverloadedError.prototype.constructor = MethodNotOverloadedError;
-
-        return new MethodNotOverloadedError(method);
-    }
-};
-
-Component.prototype.extensions = {
-    'history': History,
-    'subscriber': Subscriber,
-    'state'  : StateMachine,
-    'aggregator': Aggregator,
-    'presenter': Presenter
-};
-
-PriceComponent.prototype.extensions['price_filter'] = PriceAggregator;
-
-BonusProgram.prototype.extensions.decorator = BonusDecorator;
-
-Subscriber.prototype.settings = {
-  'event_broker': Hub
-};
-
-History.prototype.tags = {
-    'initialized': function(root, data){
-        var record = { message: 'Component with id: '+ root.getId() +' has been initialized ' };
-
-        if(data && Object.keys(data).length){
-            record.message += 'with settings';
-        }else{
-            record.message += 'without settings';
-        }
-
-        return record;
-    },
-
-    'property_changed': function(root, data){
-        var record = { message: 'Component has changed property '};
-
-        record.message += '[' + data.prop + '] ';
-        record.message += 'from ' + data.previous + ' to ' + data.current;
-
-        return record;
-    },
-
-    'prepared': function(root, data)
-    {
-        var record = { message: 'Component has been prepared', data: data };
-
-        return record;
-    },
-
-    'state_changed': function(root, data)
-    {
-        var record = { message: 'Component transits ' };
-        record.message += (data.previous && data.previous !== data.current) ? 'from ' + data.previous + ' ' : '';
-        record.message += 'to state ' + data.current;
-
-        return record;
-    }
-};
-
-PriceAggregator.prototype.filters = {
-    'total': function(root){
-        var price = 0;
-
-        root.getComponents(function(component){
-            price += component.getPrice();
-        });
-
-        return price;
-    },
-    'sum': function(root, component_ids){
-        var sum = 0;
-
-        for(var i in component_ids){
-            var component = root.findComponentById(component_ids[i]);
-
-            if(component){
-                sum += component.getPrice();
-            }
-        }
-
-        return sum;
-    }
 };
 
 function BonusProgramDefaultState()
@@ -243,9 +143,176 @@ BonusProgramDefaultState.prototype.constructor = BonusProgramDefaultState;
 BonusProgramActivatedState.prototype = Object.create(State.prototype);
 BonusProgramActivatedState.prototype.constructor = BonusProgramActivatedState;
 
-BonusProgram.prototype.states = {
-    'default': BonusProgramDefaultState,
-    'activated': BonusProgramActivatedState
+StateMachine.settings = {
+    'errors': {
+        'state_not_found': function(data){
+            function NoStateFoundError(state){
+                this.name = 'NoStateFoundError';
+                this.message = 'No state found by id: ' + state;
+            };
+            NoStateFoundError.prototype = Object.create(Error.prototype);
+            NoStateFoundError.prototype.constructor = NoStateFoundError;
+
+            return new NoStateFoundError(data);
+        },
+        'method_not_overloaded': function(method)
+        {
+            function MethodNotOverloadedError(method){
+                this.name = 'MethodNotOverloadedError';
+                this.message = 'Method ' + method + ' must be overloaded!';
+            };
+            MethodNotOverloadedError.prototype = Object.create(Error.prototype);
+            MethodNotOverloadedError.prototype.constructor = MethodNotOverloadedError;
+
+            return new MethodNotOverloadedError(method);
+        }
+    }
+};
+
+Component.settings = {
+    'extensions':  {
+        'history': History,
+        'subscriber': Subscriber,
+        'state'  : StateMachine,
+        'aggregator': Aggregator,
+        'presenter': Presenter
+    }
+};
+
+PriceComponent.settings = {
+    'extensions':  {
+        'subscriber': Subscriber,
+        'aggregator': Aggregator,
+        'presenter': Presenter
+    }
+};
+
+BonusProgram.settings = {
+    'extensions': {
+        'subscriber': Subscriber,
+        'aggregator': Aggregator,
+        'presenter': Presenter,
+        'state'  : StateMachine,
+        'decorator': BonusDecorator
+    },
+    'subscriptions': {
+        'payment_system_changed': function(envelope){
+            this.reload(envelope.data.component);
+        }
+    },
+    'states': {
+        'default': BonusProgramDefaultState,
+        'activated': BonusProgramActivatedState
+    }
+};
+
+PaymentSystem.settings = {
+    'extensions': {
+        'subscriber': Subscriber,
+        'aggregator': Aggregator,
+        'presenter': Presenter,
+        'state'  : StateMachine
+    }
+};
+
+PaymentGroup.settings = {
+    'extensions': {
+        'subscriber': Subscriber,
+        'aggregator': Aggregator,
+        'presenter': Presenter,
+        'state'  : StateMachine
+    }
+};
+
+PaymentManager.settings = {
+    'extensions': {
+        'subscriber': Subscriber,
+        'aggregator': Aggregator,
+        'state': StateMachine,
+        'presenter': Presenter
+    }
+};
+
+BonusManager.settings = {
+    'extensions': {
+        'subscriber': Subscriber,
+        'aggregator': Aggregator,
+        'decorator': BonusDecorator,
+        'state': StateMachine,
+        'presenter': Presenter,
+        'price_filter': PriceAggregator
+    }
+};
+
+
+Subscriber.settings = {
+  'event_broker': Hub
+};
+
+History.settings = {
+    'tags': {
+        'initialized': function (root, data) {
+            var record = {message: 'Component with id: ' + root.getId() + ' has been initialized '};
+
+            if (data && Object.keys(data).length) {
+                record.message += 'with settings';
+            } else {
+                record.message += 'without settings';
+            }
+
+            return record;
+        },
+
+        'property_changed': function (root, data) {
+            var record = {message: 'Component has changed property '};
+
+            record.message += '[' + data.prop + '] ';
+            record.message += 'from ' + data.previous + ' to ' + data.current;
+
+            return record;
+        },
+
+        'prepared': function (root, data) {
+            var record = {message: 'Component has been prepared', data: data};
+
+            return record;
+        },
+
+        'state_changed': function (root, data) {
+            var record = {message: 'Component transits '};
+            record.message += (data.previous && data.previous !== data.current) ? 'from ' + data.previous + ' ' : '';
+            record.message += 'to state ' + data.current;
+
+            return record;
+        }
+    }
+};
+
+PriceAggregator.settings = {
+    'filters': {
+        'total': function(root){
+            var price = 0;
+
+            root.getComponents(function(component){
+                price += component.getPrice();
+            });
+
+            return price;
+        },
+        'sum': function(root, component_ids){
+            var sum = 0;
+
+            for(var i in component_ids){
+                var component = root.findComponentById(component_ids[i]);
+
+                if(component){
+                    sum += component.getPrice();
+                }
+            }
+
+            return sum;
+        }
+    }
 };
 
 function DefaultState()

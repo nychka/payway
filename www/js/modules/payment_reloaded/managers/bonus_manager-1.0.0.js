@@ -70,12 +70,6 @@ function BonusManager(settings)
 BonusManager.prototype = Object.create(PriceComponent.prototype);
 BonusManager.prototype.constructor = BonusManager;
 
-BonusProgram.prototype.subscriptions = {
-  'payment_system_changed': function(envelope){
-    this.reload(envelope.data.component);
-  }
-};
-
 function BonusDecorator(component)
 {
   this.component = component;

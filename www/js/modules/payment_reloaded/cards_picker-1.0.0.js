@@ -150,11 +150,11 @@ function CardsPicker(settings)
 
   this.getCards = function(filter, data)
   {
-    var proto = CardsPicker.prototype;
+    var filters = this.constructor.settings && this.constructor.settings.filters;
     var cards = userCards;
-    var hasFilter = filter && proto.filters && Object.keys(proto.filters).length && proto.filters.hasOwnProperty(filter);
+    var hasFilter = filter && filters && Object.keys(filters).length && filters.hasOwnProperty(filter);
 
-    return hasFilter ? proto.filters[filter].call(this, cards, data) : cards;
+    return hasFilter ? filters[filter].call(this, cards, data) : cards;
   };
 
   this.getOptions = function()

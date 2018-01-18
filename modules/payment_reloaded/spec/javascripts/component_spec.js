@@ -62,6 +62,14 @@ describe('Component', function(){
            expect(component.getComponents()).toEqual({'foo': foo});
          });
        });
+
+       describe('PriceAggregator', function(){
+          it('by default component does not have PriceAggregator', function(){
+              component = new Component({id: 'foo'});
+
+              expect(component.extensions.hasOwnProperty('price_filter')).toBeFalsy();
+          });
+       });
     });
 
     describe('Subscriber', function(){
@@ -181,6 +189,9 @@ describe('PriceComponent', function(){
     });
 
     describe('History', function(){
+        beforeEach(function(){
+           PriceComponent.settings.extensions.history = History;
+        });
         describe('initialized', function(){
             it('with settings', function(){
                 component = new PriceComponent({ price: 22 });

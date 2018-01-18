@@ -3,6 +3,7 @@ describe('PriceAggregator', function(){
 
     beforeEach(function(){
         aggregator = new PriceComponent();
+        aggregator.extend('price_filter', PriceAggregator);
     });
 
     afterEach(function(){
@@ -20,20 +21,22 @@ describe('PriceAggregator', function(){
 
         it('has one component: payment_manager which is aggregator of components', function(){
             var manager = new PaymentManager({ id: 'payment_manager' });
-            manager.registerComponent(new PriceComponent({ id: 'foo', price: 51 }));
-            manager.registerComponent(new PriceComponent({ id: 'bar', price: 49 }));
+            manager.registerComponent(new PaymentSystem({ id: 'foo', price: 51 }));
+            manager.registerComponent(new PaymentSystem({ id: 'bar', price: 49 }));
+            manager.setActive('foo');
 
             aggregator.registerComponent(manager);
 
-            expect(aggregator.getPrice()).toEqual(100);
+            expect(aggregator.getPrice()).toEqual(51);
         });
 
         it('has two components: payment_manager and bonus_manager', function(){
             var payment_manager = new PaymentManager({ id: 'payment_manager' });
             var bonus_manager = new BonusManager({ id: 'bonus_manager' });
-            payment_manager.registerComponent(new PriceComponent({ id: 'webmoney', price: 500 }));
+            payment_manager.registerComponent(new PaymentSystem({ id: 'webmoney', price: 500 }));
             bonus_manager.registerComponent(new PriceComponent({ id: 'ttn', price: -150 }));
             bonus_manager.registerComponent(new PriceComponent({ id: 'promo', price: 650 }));
+            payment_manager.setActive('webmoney');
 
             aggregator.registerComponent(payment_manager);
             aggregator.registerComponent(bonus_manager);

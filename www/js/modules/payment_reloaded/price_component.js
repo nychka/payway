@@ -18,10 +18,11 @@ function Component(settings)
 
     this.prepareExtensions = function()
     {
-        if(! (Component.prototype.hasOwnProperty('extensions') && Object.keys(Component.prototype.extensions).length)) return false;
+        var extensions = this.constructor.settings && this.constructor.settings.extensions;
 
-        for(var extension in Component.prototype.extensions) this.extend(extension, Component.prototype.extensions[extension]);
-        this.afterExtend(extension);
+        if(! (extensions && Object.keys(extensions).length > 0)) return false;
+
+        for(var extension in extensions) this.extend(extension, extensions[extension]);
     };
 
     this.getId = function(){
@@ -47,16 +48,6 @@ function Component(settings)
         this.extensions[id] = extension;
 
         this[id] = extension;
-        this.afterExtend(id, extension);
-    };
-
-    this.afterExtend = function(id, ext)
-    {
-      var callbacks = this.constructor.prototype.extensions_callbacks;
-
-      if(callbacks && typeof callbacks[id] === 'function'){
-        callbacks[id].call(this, ext);
-      }
     };
 
     init.call(this, settings);
@@ -97,7 +88,7 @@ function StateMachine(component)
 
     this.get = function(state)
     {
-        if(! states.hasOwnProperty(state)) throw StateMachine.prototype.errors.state_not_found(state);
+        if(! states.hasOwnProperty(state)) throw StateMachine.settings.errors.state_not_found(state);
 
         return states[state];
     };
@@ -115,7 +106,7 @@ function StateMachine(component)
 
     var _prepareStates = function()
     {
-        var states = component.constructor.prototype.states;
+        var states = component.constructor.settings && component.constructor.settings.states;
 
         if(! (states && Object.keys(states).length)) return false;
 
@@ -136,7 +127,7 @@ State.prototype.setId = function(id){ this.id = id; };
 
 State.prototype.canHandle = function(){ return true; };
 
-State.prototype.handle = function(){ throw StateMachine.prototype.errors.method_not_overloaded('handle'); };
+State.prototype.handle = function(){ throw StateMachine.settings.errors.method_not_overloaded('handle'); };
 
 function History(root)
 {
@@ -149,7 +140,7 @@ function History(root)
 
     this.save = function(tag, data)
     {
-        var record = History.prototype.tags.hasOwnProperty(tag) ? History.prototype.tags[tag].call(this, root, data) : { message: tag };
+        var record = History.settings.tags.hasOwnProperty(tag) ? History.settings.tags[tag].call(this, root, data) : { message: tag };
 
         this.add(tag, record);
     };
@@ -166,7 +157,7 @@ function Subscriber(component)
     var self = this;
     this.subscriptions = {};
     this.publications = {};
-    this.broker = Subscriber.prototype.settings.event_broker;
+    this.broker = this.constructor.settings.event_broker;
 
     var _init = function()
     {
@@ -216,7 +207,7 @@ function Subscriber(component)
 
     var _prepareSubscriptions = function()
     {
-        var subscriptions = component.constructor.prototype.subscriptions;
+        var subscriptions = component.constructor.settings.subscriptions;
 
         if(subscriptions && Object.keys(subscriptions).length){
             for(var event in subscriptions){
@@ -433,11 +424,20 @@ function PriceAggregator(root)
 
     var init = function()
     {
-        var proto = PriceAggregator.prototype;
-
-        for(var filter in proto.filters) this.registerFilter(filter, proto.filters[filter]);
-
+        this._prepareFilters();
         this.extendComponent();
+    };
+
+    this._prepareFilters = function()
+    {
+        var filters = this.constructor.settings && this.constructor.settings.filters;
+
+        if(! (filters && Object.keys(filters).length > 0)){
+            throw new Error('No filters found! Check '+ this.constructor.name + '.settings');
+            return false;
+        }
+
+        for(var filter in filters) this.registerFilter(filter, filters[filter]);
     };
 
   this.extendComponent = function()

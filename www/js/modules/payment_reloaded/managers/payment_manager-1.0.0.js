@@ -1,13 +1,9 @@
 function PaymentManager(settings)
 {
-  this.activePaymentSystem = null;
-
   PriceComponent.call(this, settings);
 
   this.getPrice = function(filter)
   {
-    if(filter) return this.price_filter.getPrice(filter);
-
     return this.getActivePaymentSystem().getPrice();
   };
 };
@@ -26,17 +22,4 @@ PaymentManager.prototype.setActivePaymentSystem = function(id)
 PaymentManager.prototype.getActivePaymentSystem = function()
 {
   return this.findActiveComponentBy({ type: PaymentSystem });
-};
-
-PaymentManager.prototype.extensions_callbacks = {
-  // 'price_filter': function(ext){
-  //   console.log(ext, this);
-  //   var self = this;
-  //
-  //   ext.registerFilter('active', function(){
-  //     return self.getActivePaymentSystem().getPrice();
-  //   });
-  //
-  //   ext.setDefaultFilter('active');
-  // }
 };

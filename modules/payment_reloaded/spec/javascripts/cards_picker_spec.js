@@ -265,7 +265,7 @@ describe('CardsPicker', function(){
             it('when no state found', function(){
                 expect(function(){
                     picker.state.get('fd');
-                }).toThrow( StateMachine.prototype.errors.state_not_found('fd'));
+                }).toThrow( StateMachine.settings.errors.state_not_found('fd'));
             });
         });
 
@@ -300,7 +300,7 @@ describe('CardsPicker', function(){
 
           expect(function(){
               picker.state.transitTo('activated');
-          }).toThrow(StateMachine.prototype.errors.method_not_overloaded('handle'));
+          }).toThrow(StateMachine.settings.errors.method_not_overloaded('handle'));
        });
     });
 });
