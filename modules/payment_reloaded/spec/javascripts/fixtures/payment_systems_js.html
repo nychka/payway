@@ -1514,11 +1514,11 @@
             qiwiGroup = new PaymentGroup({ id: 'qiwi'});
 
             ps_341 = new PaymentSystem({ id: 341, currency: 'USD', price: 321 });
-            ps_342 = new PaymentSystem({ id: 342, currency: 'EUR', price: 300 });
+            ps_342 = new PaymentSystem({ id: 342, currency: 'EUR', price: 100 });
             ps_343 = new PaymentSystem({ id: 343, currency: 'UAH', price: 9000 });
-            ps_204 = new PaymentSystem({ id: 204, currency: 'USD', price: 321 });
-            ps_105 = new PaymentSystem({ id: 105, currency: 'USD', price: 321 });
-            ps_96  = new PaymentSystem({ id: 96, currency: 'USD', price: 321 });
+            ps_204 = new PaymentSystem({ id: 204, currency: 'USD', price: 221 });
+            ps_105 = new PaymentSystem({ id: 105, currency: 'USD', price: 421 });
+            ps_96  = new PaymentSystem({ id: 96, currency: 'USD', price: 521 });
 
             directGroup.registerComponent(ps_341);
             directGroup.registerComponent(ps_342);
@@ -1539,18 +1539,21 @@
             $('[data-component-id]').on('click', function(ev, isReversedActivated){
               if(ev.isTrigger && isReversedActivated === 'isReversedActivated') return false;
 
-              manager.setActive($(ev.currentTarget).data('component-id'));
+              console.log('click event on [data-component-id] was fired');
+              manager.setActivePaymentSystem($(ev.currentTarget).data('component-id'));
             });
 
             $('select').on('change', function(ev, isReversedActivated){
               if(ev.isTrigger && isReversedActivated === 'isReversedActivated') return false;
-
-              manager.setActive($(this).find(':selected').data('component-id').toString());
+                console.log('change event on [data-component-id] was fired');
+              manager.setActivePaymentSystem($(this).find(':selected').data('component-id').toString());
             });
+
+
           };
 
           var setActivePaymentSystem = function(){
-            manager.setActive('341');
+            manager.setActivePaymentSystem('341');
           };
 
           initialize();
@@ -1568,10 +1571,10 @@
     <div id="tabs-card-group">
         <div id="card-group" class="tabs">
             <ul>
-                <li><a href="#card-group-aircompany" data-component-id="aircompany">Aircompany</a></li>
-                <li><a href="#card-group-direct" data-component-id="direct">Direct</a></li>
+                <li><a href="#card-group-aircompany" data-component-id="aircompany">Aircompany&nbsp;<span class="cost">0.00</span>&nbsp;<span class="currency"></a></li>
+                <li><a href="#card-group-direct" data-component-id="direct">Direct&nbsp;<span class="cost">0.00</span>&nbsp;<span class="currency"></a></li>
             </ul>
-            <div id="card-group-aircompany">Aircompany</div>
+            <div id="card-group-aircompany">Aircompany&nbsp;</div>
             <div id="card-group-direct">
                 <h2>Direct group</h2>
                 <select>

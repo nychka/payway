@@ -190,8 +190,8 @@ function Subscriber(component)
     this.publish = function(event, envelope)
     {
       if(this.subscriptions.hasOwnProperty(event)) {
-        throw new Error('Component ' + this.getId() + ' has already subscribed on event: ' + event + ' and can NOT publish it!');
-        return false;
+        // throw new Error('Component ' + component.getId() + ' has already subscribed on event: ' + event + ' and can NOT publish it!');
+        // return false;
       }
 
       this.publications[event] = envelope;
@@ -253,6 +253,8 @@ function Presenter(root)
 
   this.trigger = function()
   {
+      console.log('Component with id: ' + root.getId() + ' was triggered');
+      this.render();
     var el = this.findElementByComponent();
 
     if(el.length == 0) return false;
@@ -277,6 +279,11 @@ function Presenter(root)
   {
     return $('[data-component-id="'+ this.root.getId() +'"]');
   }
+};
+
+Presenter.prototype.render = function()
+{
+    console.log('Call render on component id: '+ this.root.getId());
 };
 
 function Aggregator(root)
@@ -396,6 +403,20 @@ function Aggregator(root)
     component.setActiveChild();
   };
 
+  this.map = function(fn)
+  {
+      var components = [];
+
+      var picker = function(component){
+          if(typeof fn === 'function') fn.call(root, component);
+          components.push(component);
+          if(component.hasActiveComponent()) picker(component.getActiveComponent());
+      };
+      if(this.hasActiveComponent()) picker(this.getActiveComponent());
+
+    return components;
+  };
+
   this.defineComponent = function(component)
   {
     if(! component) return this;
@@ -406,7 +427,6 @@ function Aggregator(root)
   this.setActiveComponent = function(component)
   {
     this.activeComponent = component;
-    if(component.presenter) component.presenter.trigger();
   };
 
   this.getActiveComponent = function()

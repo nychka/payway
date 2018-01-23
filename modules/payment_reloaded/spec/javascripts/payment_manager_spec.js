@@ -204,7 +204,7 @@ describe('PaymentManager', function(){
       });
 
       it('when sets active payment system its selects its component via decorator', function(){
-          manager.setActive('qiwi');
+          manager.setActivePaymentSystem('qiwi');
 
           var tabsWrapper = $('#tabs');
           var tabs = tabsWrapper.find('ul:first a');
@@ -215,14 +215,14 @@ describe('PaymentManager', function(){
 
       it('when sets active payment system 342 it selects option', function(){
         expect($('select').find('option:selected').data('component-id')).toEqual(341);
-        manager.setActive('342');
+        manager.setActivePaymentSystem('342');
 
         expect($('select').find('option:selected').data('component-id')).toEqual(342);
       });
 
       describe('PriceAggregator', function(){
         it('when active payment system is selected, buy button is updated', function(){
-          manager.setActive('343');
+          manager.setActivePaymentSystem('343');
 
           expect(manager.getPrice()).toEqual(9000);
           expect(buyButton.find('.currency').text()).toEqual('UAH');

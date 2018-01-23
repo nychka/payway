@@ -34,4 +34,5 @@ src_files = lambda { [
 Jasmine.configure do |config|
   config.src_dir = root_path
   config.src_files = src_files
+  config.server_port = 5555
 end

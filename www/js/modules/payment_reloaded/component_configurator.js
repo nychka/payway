@@ -219,7 +219,7 @@ PaymentGroup.settings = {
     'extensions': {
         'subscriber': Subscriber,
         'aggregator': Aggregator,
-        'presenter': Presenter,
+        'presenter': PaymentGroupPresenter,
         'state'  : StateMachine
     }
 };
@@ -229,8 +229,13 @@ PaymentManager.settings = {
         'subscriber': Subscriber,
         'aggregator': Aggregator,
         'state': StateMachine,
-        'presenter': Presenter
-    }
+        'presenter': PaymentManagerPresenter
+    },
+    'subscriptions': {
+        'payment_system_changed': function(envelope){
+             this.presenter.trigger();
+        }
+    },
 };
 
 BonusManager.settings = {

@@ -61,6 +61,24 @@ describe('Component', function(){
 
            expect(component.getComponents()).toEqual({'foo': foo});
          });
+
+         it('map', function(){
+             var a, b, c;
+            a = new PriceComponent({ id: 'a' }); a.extend('aggregator', Aggregator);
+            b = new PriceComponent({ id: 'b' }); b.extend('aggregator', Aggregator);
+            c = new PriceComponent({ id: 'c' }); c.extend('aggregator', Aggregator);
+
+            a.registerComponent(b); a.setActiveComponent(b);
+            b.registerComponent(c); b.setActiveComponent(c);
+
+            var components = a.map(function(component){
+               component.setPrice(100);
+            });
+
+            expect(components).toEqual([b, c]);
+            expect(b.getPrice()).toEqual(100);
+            expect(c.getPrice()).toEqual(100);
+         });
        });
 
        describe('PriceAggregator', function(){
